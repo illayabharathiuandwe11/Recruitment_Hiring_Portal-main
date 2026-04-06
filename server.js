@@ -1,42 +1,52 @@
+require("dotenv").config();
 const express = require("express");
 const swaggerUi = require("swagger-ui-express");
 const swaggerJsdoc = require("swagger-jsdoc");
  
 const app = express();
  
-// ========== IMPROVED CORS CONFIGURATION ==========
+/* ================================
+   FIXED CORS CONFIGURATION
+================================ */
+ 
+// List of allowed origins
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:3000",
+  "https://myuandwe.netlify.app"
+];
+ 
+// CORS middleware - MUST be first
 app.use((req, res, next) => {
-  // Allow specific origins or all for testing
-  const allowedOrigins = [
-    "http://localhost:5173",
-    "https://myuandwe.netlify.app",
-    "http://localhost:3000"
-  ];
   const origin = req.headers.origin;
-  // Allow requests from allowed origins
+  // Check if origin is allowed
   if (allowedOrigins.includes(origin)) {
     res.setHeader("Access-Control-Allow-Origin", origin);
-  } else if (process.env.NODE_ENV !== "production") {
-    // Allow all origins in development
-    res.setHeader("Access-Control-Allow-Origin", "*");
   }
-  // Essential CORS headers
+  // Set CORS headers for all responses
   res.setHeader("Access-Control-Allow-Credentials", "true");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With");
-  res.setHeader("Access-Control-Max-Age", "86400"); // 24 hours cache for preflight
-  // Handle preflight requests immediately
+  res.setHeader("Access-Control-Max-Age", "86400"); // Cache preflight for 24 hours
+  // IMPORTANT: Handle OPTIONS requests immediately
   if (req.method === "OPTIONS") {
+    // Send 200 with CORS headers
     return res.status(200).end();
   }
   next();
 });
  
-// Body parser middleware
+/* ================================
+   BODY PARSER
+================================ */
+ 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
  
-// ========== ROUTES ==========
+/* ================================
+   ROUTES
+================================ */
+ 
 app.use("/api/login", require("./api/login"));
 app.use("/api/demand", require("./api/demand"));
 app.use("/api/candidates", require("./api/candidates"));
@@ -48,16 +58,10 @@ app.use("/api/selected-candidates", require("./api/selectedCandidates"));
 app.use("/api/zone", require("./api/zone"));
 app.use("/api/visa", require("./api/visa"));
  
-// Test route (make sure it's before error handler)
-app.get("/api/test", (req, res) => {
-  res.json({
-    success: true,
-    message: "Server is running",
-    time: new Date()
-  });
-});
+/* ================================
+   SWAGGER CONFIG
+================================ */
  
-// Swagger config
 const swaggerOptions = {
   definition: {
     openapi: "3.0.0",
@@ -78,7 +82,22 @@ const swaggerOptions = {
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
  
-// Error handler (should be last)
+/* ================================
+   TEST ROUTE
+================================ */
+ 
+app.get("/api/test", (req, res) => {
+  res.json({
+    success: true,
+    message: "Server is running",
+    time: new Date()
+  });
+});
+ 
+/* ================================
+   ERROR HANDLER
+================================ */
+ 
 app.use((err, req, res, next) => {
   console.error("Server Error:", err);
   res.status(500).json({
