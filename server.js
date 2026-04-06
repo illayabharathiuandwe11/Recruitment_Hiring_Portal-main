@@ -67,7 +67,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: "https://myuandwe-bg.vercel.app"
+        url: "https://hrbackend-eight.vercel.app"
       }
     ]
   },
