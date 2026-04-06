@@ -138,8 +138,9 @@ const getCandidatesInZone = async (clientName) => {
 
 router.use((req, res, next) => {
   const allowedOrigins = [
+     "https://myuandwe.netlify.app",
     "https://myuandwe.vercel.app",
-    "https://myuandwe.netlify.app",
+   
     "https://recruitment-hiring-portal-ibsf.vercel.app",
     "http://localhost:5173"
   ];
