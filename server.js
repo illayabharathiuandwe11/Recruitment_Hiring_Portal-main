@@ -11,7 +11,8 @@ const app = express();
 
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://myuandwe.netlify.app"
+  "https://myuandwe.netlify.app",
+" https://myuandwe.vercel.app"
 ];
 
 app.use((req, res, next) => {
