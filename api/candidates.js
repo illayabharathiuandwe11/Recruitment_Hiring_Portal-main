@@ -233,7 +233,7 @@ const toNumber = (value) => {
 
 const allowedOrigins = [
   'http://localhost:5173',
-  'https://myuandwe.vercel.app'
+  'https://myuandwe.netlify.app'
 ];
 
 router.use((req, res, next) => {
